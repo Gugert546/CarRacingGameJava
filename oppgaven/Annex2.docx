@@ -1,0 +1,96 @@
+ 
+ 
+Annex 2. Documentation Template 
+Task Name:   
+Student ID: 
+Student Name: 
+1. Production Description 
+1.1 Overview 
+(Provide a short description of your product. What does it do? Who is the target user? 
+What problem does it solve?) 
+ 
+1.2 Features 
+(List and briefly explain the main features of your product.) 
+ 
+1.3 Application of Key Lessons 
+(Describe how you applied the following concepts in your program. Provide specific details 
+and explain why you chose certain implementations.) 
+1.3.1 Animation (JavaFX)  
+(How did you implement animation? Which classes (e.g., Timeline, Transition) 
+were used?) 
+1.3.2 Exception Handling  
+(What errors could occur, and how did you handle them? Did you create custom 
+exceptions?) 
+1.3.3 Text I/O  
+  
+4 
+ 
+(How does your program read/write text files? Where is this used in your 
+program?) 
+1.3.4 Binary I/O (including Object Serialization)  
+(What objects/data are stored in binary form? Why did you choose binary I/O 
+instead of text I/O?) 
+ 
+2. Challenges & Problem-Solving Approach 
+(Describe at least two major challenges you encountered during development and how you 
+solved them. Be specific!) 
+ 
+3.  Design and Implementation Details 
+3.1 Program Structure 
+3.1.1 Class Diagram / Flowchart 
+(Attach a system diagram, flowchart, or simple sketches of how the program is 
+structured.) 
+3.1.2 Explanation of the overall program structure  
+(Explain how your program is structured. What are the main Java classes? What 
+are their responsibilities? How do they interact?) 
+3.2 Key Design Decisions 
+(List the major design choices you made and justify them.) 
+Component Design Choice Justification 
+Game status Binary Serialization  
+System Log Text File I/O with buffered mechanism  
+Exception Handling Custom Exception  
+   
+ 
+3.3 Implementation of Key Features 
+(Describe how you implemented the core functionalities in your program.) 
+3.3.1 Animation 
+ 
+3.3.2 Exception Handling 
+ 
+3.3.3 Text I/O 
+ 
+3.3.4 Binary I/O 
+ 
+4. Reflection & Improvements 
+4.1 Lessons Learned 
+(What did you learn from this assignment? What mistakes did you make? What would 
+you do differently next time?) 
+  
+5 
+ 
+4.2 Future Improvements 
+(What are the limitations of your program? What additional features would you add if 
+given more time?) 
+ 
+5. AI Usage & Code Authenticity Statement 
+Be transparent about AI usage and modifications. 
+5.1 Did you use any AI tools (e.g., ChatGPT, DeepSeek, Copilot)? 
+___ No AI tools were used. 
+___ Yes, AI was used (explain how below). 
+ 
+5.2 AI Code Modifications 
+(If AI was used, describe how you modified and improved the AI-generated content.) 
+ 
+AI-Generated Code Modifications Made Reason for Changes 
+Suggested an animation loop Adjusted speed and 
+timing 
+Prevent animation lag 
+Provided basic exception 
+handling 
+Added custom error 
+messages 
+Improved debugging 
+ 
+ 
+6. Screen Shots for Program Execution 
+(Provide screenshots that demonstrate key features and functionality of your program.) 
