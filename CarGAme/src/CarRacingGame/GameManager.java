@@ -1,5 +1,6 @@
 package CarRacingGame;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -29,7 +30,6 @@ public class GameManager {
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ImageView car = Car.addCar();
     private Scene menu;
-    private int score;
     private Label scoretext;
     private int lives;
     private Label lifes = new Label();
@@ -146,10 +146,11 @@ public class GameManager {
         });
     }
 
-    public void gameOver() {
+    public void gameOver() throws IOException {
         System.out.println("Game Over!"); // Debugging
         gameLoop.stop();
         lives = 3;
+        Score.saveScore();
         // game over beskjed
         Label gameOverLabel = new Label("Game Over! Press 'R' to restart.");
         gameOverLabel.setTextFill(Color.RED);
@@ -161,7 +162,6 @@ public class GameManager {
         restartButton.setLayoutX(375);
         restartButton.setLayoutY(450);
         restartButton.setOnAction(e -> restartGame());
-        System.out.println("score" + score);
         System.out.println("hearts" + lives);
         gamePane.getChildren().addAll(gameOverLabel, restartButton);
 
@@ -246,7 +246,7 @@ public class GameManager {
     }
 
     // metode for å oppdatere hindringer
-    public void updateObstacles() {
+    public void updateObstacles() throws IOException {
         Iterator<Obstacle> iterator = obstacles.iterator();
 
         while (iterator.hasNext()) {
@@ -264,8 +264,8 @@ public class GameManager {
             if (obstacle.getY() > 600) {
                 gamePane.getChildren().remove(obstacle);
                 iterator.remove();
-                this.score++;
-                scoretext.setText("" + this.score);
+                Score.scoreUp();
+                scoretext.setText("score: " + Score.returnScore());
 
             }
             if (lives == 0) {
@@ -277,7 +277,7 @@ public class GameManager {
     // lager en game loop -startes ved trykk på start knappen i hovedmenyen
     public void startGameLoop() {
         this.lives = 3;
-        this.score = 0;
+        Score.resetScore();
         AnimationTimer gameLoop = new AnimationTimer() {
             private long lastSpawnTime = 0;
 
@@ -288,7 +288,12 @@ public class GameManager {
                     spawnObstacle();
                     lastSpawnTime = now;
                 }
-                updateObstacles();
+                try {
+                    updateObstacles();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
 
         };
@@ -296,5 +301,3 @@ public class GameManager {
         this.gameLoop = gameLoop;
     }
 }
-
-// poengtavle
