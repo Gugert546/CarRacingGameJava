@@ -1,5 +1,6 @@
 package CarRacingGame;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
@@ -39,7 +41,7 @@ public class GameManager {
         this.primaryStage = primaryStage;
     }
 
-    public void menuPane() {
+    public void menuPane() throws FileNotFoundException {
 
         // lager en menupane og fjerner tidligere children
         Pane menuPane = new Pane(); // Initialize menuPane
@@ -113,8 +115,27 @@ public class GameManager {
         leftTxt.setWrapText(true);
         leftTxt.setPrefWidth(175);
 
+        int[] topScores = Score.readScore(); // Get top five scores
+
+        VBox leaderboardBox = new VBox(10); // Spacing of 10 between elements
+        leaderboardBox.setStyle("-fx-alignment: center;"); // Center-align text
+        leaderboardBox.setLayoutX(610);
+        leaderboardBox.setLayoutY(90);
+
+        Label title = new Label("Leaderboard");
+        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+
+        leaderboardBox.getChildren().add(title);
+
+        // Create labels for each score
+        for (int i = 0; i < topScores.length; i++) {
+            Label scoreLabel = new Label((i + 1) + ". " + topScores[i]);
+            scoreLabel.setStyle("-fx-font-size: 16px;");
+            leaderboardBox.getChildren().add(scoreLabel);
+        }
+
         // legger til elementene på hovedmenyen
-        menuPane.getChildren().addAll(r1, r2, r3, leftTxt, startBt, tittel, movingCar);
+        menuPane.getChildren().addAll(r1, r2, r3, leftTxt, startBt, tittel, movingCar, leaderboardBox);
         Scene menu = new Scene(menuPane, 800, 600);
         this.menu = menu;
         primaryStage.setTitle("CarRacingGame");
@@ -158,13 +179,25 @@ public class GameManager {
         gameOverLabel.setLayoutX(150);
         gameOverLabel.setLayoutY(300);
 
-        Button restartButton = new Button("Restart");
-        restartButton.setLayoutX(375);
-        restartButton.setLayoutY(450);
-        restartButton.setOnAction(e -> restartGame());
-        System.out.println("hearts" + lives);
-        gamePane.getChildren().addAll(gameOverLabel, restartButton);
+        Button menuBt = new Button("til hovedmenyen");
+        menuBt.setLayoutX(350);
+        menuBt.setLayoutY(400);
 
+        Button restartBt = new Button("restart");
+        restartBt.setLayoutX(375);
+        restartBt.setLayoutY(500);
+
+        restartBt.setOnAction(e -> {
+            restartGame();
+            gamePane.getChildren().remove(menuBt);
+            gamePane.getChildren().remove(restartBt);
+        });
+        menuBt.setOnAction(e -> {
+            primaryStage.setScene(menu);
+            gamePane.getChildren().remove(menuBt);
+            gamePane.getChildren().remove(restartBt);
+        });
+        gamePane.getChildren().addAll(menuBt, restartBt);
     }
 
     public void restartGame() {
