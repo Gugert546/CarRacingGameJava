@@ -1,3 +1,9 @@
+/**
+* GameManager class
+* Version 1.0
+* Audun Halstensen
+*/
+
 package CarRacingGame;
 
 import java.io.FileNotFoundException;
@@ -13,6 +19,8 @@ import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -25,27 +33,34 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class GameManager {
+    //globale variabler
     private Stage primaryStage;
     private Pane gamePane;
     private AnimationTimer gameLoop;
     private Random random = new Random();
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ImageView car = Car.addCar();
-    private Scene menu;
+   
     private Label scoretext;
     private int lives;
     private Label lifes = new Label();
-
+    private int speed=2;
+    private Pane menuPane;
+    private Scene menu;
+    private VBox leaderboardBox;
+    
+    /** konstruktør for gameManager klassen */
     public GameManager(Stage primaryStage) {
         gamePane = new Pane();
         this.primaryStage = primaryStage;
     }
-
+    /** lager og viser en hovedmey*/
     public void menuPane() throws FileNotFoundException {
 
         // lager en menupane og fjerner tidligere children
         Pane menuPane = new Pane(); // Initialize menuPane
         Scene gamePlay = new Scene(gamePane, 800, 600);
+
         menuPane.getChildren().clear();
 
         // knapp for å starte spillet
@@ -55,6 +70,7 @@ public class GameManager {
 
         // håndtering av startknapp
         startBt.setOnAction(e -> {
+            Obstacle.setSpeed(speed);
             setupGame();
             primaryStage.setScene(gamePlay);
             primaryStage.show();
@@ -62,6 +78,30 @@ public class GameManager {
             handleKeyPress(gamePlay);
 
         });
+        ToggleGroup rgroup = new ToggleGroup();
+        RadioButton d1 = new RadioButton();
+        
+        d1.setToggleGroup(rgroup);
+        d1.setSelected(true);
+        d1.setOnAction(e->{speed=2;});
+        RadioButton d2 = new RadioButton();
+        d2.setToggleGroup(rgroup);
+        d2.setOnAction(e->{speed=3;});
+        RadioButton d3 = new RadioButton();
+        d3.setToggleGroup(rgroup);
+        d3.setOnAction(e->{speed=5;});
+        
+        d1.setLayoutX(15);
+        d1.setLayoutY(350);
+        d2.setLayoutX(35);
+        d2.setLayoutY(350);
+        d3.setLayoutX(55);
+        d3.setLayoutY(350);
+
+        Label dlabel=new Label("Vanskelighetsgrad:");
+        dlabel.setLayoutX(10);
+        dlabel.setLayoutY(325);
+        
 
         // bakgrunn, satt til samme farge som gifen
         Rectangle r1 = new Rectangle(0, 0, 800, 600);
@@ -115,36 +155,19 @@ public class GameManager {
         leftTxt.setWrapText(true);
         leftTxt.setPrefWidth(175);
 
-        int[] topScores = Score.readScore(); // Get top five scores
-
-        VBox leaderboardBox = new VBox(10); // Spacing of 10 between elements
-        leaderboardBox.setStyle("-fx-alignment: center;"); // Center-align text
-        leaderboardBox.setLayoutX(610);
-        leaderboardBox.setLayoutY(90);
-
-        Label title = new Label("Leaderboard");
-        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
-
-        leaderboardBox.getChildren().add(title);
-
-        // Create labels for each score
-        for (int i = 0; i < topScores.length; i++) {
-            Label scoreLabel = new Label((i + 1) + ". " + topScores[i]);
-            scoreLabel.setStyle("-fx-font-size: 16px;");
-            leaderboardBox.getChildren().add(scoreLabel);
-        }
-
+        VBox leaderboardBox = Score.leaderboard();
+        this.leaderboardBox=leaderboardBox;
         // legger til elementene på hovedmenyen
-        menuPane.getChildren().addAll(r1, r2, r3, leftTxt, startBt, tittel, movingCar, leaderboardBox);
+        menuPane.getChildren().addAll(r1, r2, r3, leftTxt, startBt, tittel, movingCar, leaderboardBox, d1,d2,d3,dlabel);
+        this.menuPane=menuPane;
         Scene menu = new Scene(menuPane, 800, 600);
-        this.menu = menu;
         primaryStage.setTitle("CarRacingGame");
         primaryStage.setScene(menu);
         primaryStage.setResizable(false);
         primaryStage.show();
+        this.menu=menu;
     }
-
-    // flytter bilen på x-aksen
+    /** metode for å håndtere key-input, flytter også bilen på x-aksen */
     public void handleKeyPress(Scene gamePlay) {
 
         gamePlay.setOnKeyPressed(e -> {
@@ -166,12 +189,20 @@ public class GameManager {
             }
         });
     }
-
+    /**metode for å oppdatere poengtavla på hovedmenyen */
+    public void updateMenu() throws FileNotFoundException{
+        menuPane.getChildren().remove(leaderboardBox);
+        leaderboardBox=Score.leaderboard();
+        menuPane.getChildren().add(leaderboardBox);
+    }
+    /**en metode for å håndtere et game-over scenario*/
     public void gameOver() throws IOException {
         System.out.println("Game Over!"); // Debugging
         gameLoop.stop();
         lives = 3;
         Score.saveScore();
+        Score.resetScore();
+        
         // game over beskjed
         Label gameOverLabel = new Label("Game Over! Press 'R' to restart.");
         gameOverLabel.setTextFill(Color.RED);
@@ -193,13 +224,18 @@ public class GameManager {
             gamePane.getChildren().remove(restartBt);
         });
         menuBt.setOnAction(e -> {
+            try {
+                updateMenu();
+            } catch (FileNotFoundException e1) {
+                e1.printStackTrace();
+            }
             primaryStage.setScene(menu);
-            gamePane.getChildren().remove(menuBt);
-            gamePane.getChildren().remove(restartBt);
+            gamePane.getChildren().clear(); 
+            obstacles.clear();
         });
-        gamePane.getChildren().addAll(menuBt, restartBt);
+        gamePane.getChildren().addAll(menuBt, restartBt,gameOverLabel);
     }
-
+    /**metode for å restarte spillet*/
     public void restartGame() {
         gamePane.getChildren().clear(); // Clear game objects
         obstacles.clear();
@@ -209,7 +245,7 @@ public class GameManager {
         gameLoop.start();
 
     }
-
+    /**metode for å pause spillet- lager og viser en pausemeny*/
     public void pauseGame() {
         if (gameLoop != null) {
             gameLoop.stop();
@@ -225,18 +261,21 @@ public class GameManager {
                 gameLoop.start();
                 gamePane.getChildren().remove(menuBt);
                 gamePane.getChildren().remove(resumeBt);
+                
             });
             menuBt.setOnAction(e -> {
                 primaryStage.setScene(menu);
-                gamePane.getChildren().remove(menuBt);
-                gamePane.getChildren().remove(resumeBt);
+                gamePane.getChildren().clear(); 
+                obstacles.clear();
+                
             });
             gamePane.getChildren().addAll(menuBt, resumeBt);
         }
 
     }
-
+    /**metode for å sette opp spillet*/
     public void setupGame() {
+        
         gamePane.getChildren().clear();
         // setter bakgrunnsfarge for veien
         Rectangle r1 = new Rectangle(10, 0, 780, 600);
@@ -269,16 +308,14 @@ public class GameManager {
         scoretext.setLayoutY(100);
         gamePane.getChildren().add(scoretext);
     }
-
-    // metode for å lage nye hindringer
+    /**metode for å lage nye hindringer*/
     public void spawnObstacle() {
         double x = random.nextDouble() * (800 - 50); // Random X position
         Obstacle obstacle = new Obstacle(x, 0); // Start at the top
         obstacles.add(obstacle);
         gamePane.getChildren().add(obstacle);
     }
-
-    // metode for å oppdatere hindringer
+    /**  metode for å oppdatere hindringer(også ansvarlig for kollisjoner)*/
     public void updateObstacles() throws IOException {
         Iterator<Obstacle> iterator = obstacles.iterator();
 
@@ -289,6 +326,7 @@ public class GameManager {
                 gamePane.getChildren().remove(obstacle);
                 iterator.remove();
                 lives--;
+                System.out.println(lives);
                 lifes.setText("liv:" + lives);
                 System.out.println(lives);
             }
@@ -306,8 +344,7 @@ public class GameManager {
             }
         }
     }
-
-    // lager en game loop -startes ved trykk på start knappen i hovedmenyen
+    /** lager en game loop -startes ved trykk på start knappen i hovedmenyen*/
     public void startGameLoop() {
         this.lives = 3;
         Score.resetScore();

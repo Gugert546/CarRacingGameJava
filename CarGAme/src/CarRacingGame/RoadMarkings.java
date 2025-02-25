@@ -1,3 +1,9 @@
+/**
+* Score class
+* Version 1.0
+* Audun Halstensen
+* 
+*/
 package CarRacingGame;
 
 
@@ -6,6 +12,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.Pane;
 
 public class RoadMarkings {
+    /** metode for å lage gule striper til bakgrunnen */
     public static void addDottedLine(Pane pane) {
         double startX = 400; // Center X position
         double startY = 0;   // Start from the top
