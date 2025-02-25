@@ -40,7 +40,6 @@ public class GameManager {
     private Random random = new Random();
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ImageView car = Car.addCar();
-   
     private Label scoretext;
     private int lives;
     private Label lifes = new Label();
@@ -78,26 +77,31 @@ public class GameManager {
             handleKeyPress(gamePlay);
 
         });
+
+        //valg av vanskelighetsgrad
         ToggleGroup rgroup = new ToggleGroup();
         RadioButton d1 = new RadioButton();
         
         d1.setToggleGroup(rgroup);
         d1.setSelected(true);
+        d1.setText("1");
         d1.setOnAction(e->{speed=2;});
         RadioButton d2 = new RadioButton();
         d2.setToggleGroup(rgroup);
+        d2.setText("2");
         d2.setOnAction(e->{speed=3;});
         RadioButton d3 = new RadioButton();
         d3.setToggleGroup(rgroup);
+        d3.setText("3");
         d3.setOnAction(e->{speed=5;});
-        
+        //setter pos til knappene
         d1.setLayoutX(15);
         d1.setLayoutY(350);
-        d2.setLayoutX(35);
+        d2.setLayoutX(55);
         d2.setLayoutY(350);
-        d3.setLayoutX(55);
+        d3.setLayoutX(95);
         d3.setLayoutY(350);
-
+        //lager en label for vanskelighetsgrad
         Label dlabel=new Label("Vanskelighetsgrad:");
         dlabel.setLayoutX(10);
         dlabel.setLayoutY(325);
@@ -133,7 +137,7 @@ public class GameManager {
 
         // animasjon
         PathTransition pt = new PathTransition();
-        pt.setDuration(Duration.millis(50000));
+        pt.setDuration(Duration.millis(25000));
         pt.setNode(movingCar);
         pt.setPath(l1);
         pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
